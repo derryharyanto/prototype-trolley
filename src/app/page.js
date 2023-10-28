@@ -14,18 +14,8 @@ import {
   Divider,
   Box,
   Button,
-  TableContainer,
-  Table,
-  TableHead,
-  TableRow,
-  TableCell,
-  Paper,
-  TableBody,
-  List,
-  ListItem,
-  ListItemText,
 } from "@mui/material";
-import { CameraEnhance } from "@mui/icons-material";
+import { Assignment, CameraEnhance } from "@mui/icons-material";
 import { QrReader } from "react-qr-reader";
 import { useRouter, useParams } from "next/navigation";
 import { useAtom } from "jotai";
@@ -36,25 +26,12 @@ export default function Home() {
   const router = useRouter();
   const [data, setData] = useAtom(AllUserData);
 
-  const toggleCamera = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-      webcamRef.current = stream;
-      // Access granted, so show the camera stream.
-      setShowCamera(true);
-    } catch (error) {
-      console.error("Error accessing camera:", error);
-    }
-  };
-
-  const nextPage = () => {
+  const cameraPage = () => {
     router.push("/camera");
   };
 
-  const stopCamera = () => {
-    webcamRef.current.getTracks().forEach((track) => track.stop());
-    webcamRef.current = null;
-    setShowCamera(false);
+  const statusPage = () => {
+    router.push("/status");
   };
 
   return (
@@ -70,18 +47,21 @@ export default function Home() {
           <Button
             startIcon={<CameraEnhance />}
             variant="outlined"
-            onClick={nextPage}
+            onClick={cameraPage}
             color="primary"
           >
             <Typography>Scan a Barcode</Typography>
           </Button>
         </Grid>
-
         <Grid item xs={12}>
-          <Typography>All Rented User</Typography>
-          <Grid item xs={12}>
-            {data}
-          </Grid>
+          <Button
+            startIcon={<Assignment />}
+            variant="outlined"
+            onClick={statusPage}
+            color="primary"
+          >
+            Check Status
+          </Button>
         </Grid>
       </Grid>
     </main>

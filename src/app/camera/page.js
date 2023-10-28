@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useState, useRef, useContext } from "react";
+import React, { useState, useRef, useContext, use } from "react";
 import { Button, Grid } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { QrReader } from "react-qr-reader";
 import { useAtom } from "jotai";
 import { AllUserData } from "../storing/userData";
+import { v4 } from "uuid";
 
 function Camera() {
   const webcamRef = useRef(null);
@@ -42,8 +43,14 @@ function Camera() {
 
   const convertObject = (value) => {
     const temp = JSON.parse(value);
+    const currDate = Date.now();
     console.log("🚀 ~ file: page.js:56 ~ convertObject ~ temp:", temp.user);
-    setData((prev) => [...prev, temp.user]);
+    data.push({
+      user: temp.user,
+      issuedAt: currDate,
+      id: v4(),
+    });
+    setData(data);
   };
 
   return (
