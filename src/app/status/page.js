@@ -25,11 +25,6 @@ function ShowUser() {
     router.push("/");
   };
 
-  //   const deleteUser = (uuid) => {
-  //     const newArray = data.filter((data) => data.id !== uuid);
-  //     setData(newArray);
-  //   };
-
   const convertToUTC = (param) => {
     const utcFormat = new Date(param);
     const options = {
@@ -70,14 +65,13 @@ function ShowUser() {
                     : "OVEDUE"}
                 </TableCell>
                 <TableCell>
-                  {/* <Button
+                  <Button
                     startIcon={<DeleteForever />}
                     variant="outlined"
-                    onClick={deleteUser(data.id)}
                     color="error"
                   >
                     Finish Borrow
-                  </Button> */}
+                  </Button>
                 </TableCell>
               </TableRow>
             ))}

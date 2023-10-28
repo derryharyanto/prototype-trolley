@@ -8,10 +8,10 @@ import { QrReader } from "react-qr-reader";
 import { useAtom } from "jotai";
 import { AllUserData } from "../storing/userData";
 import { v4 } from "uuid";
+import { debounce } from "lodash";
 
 function Camera() {
   const webcamRef = useRef(null);
-  const qrReaderRef = useRef(null);
   const [showCamera, setShowCamera] = useState(false);
   const router = useRouter();
   const [data, setData] = useAtom(AllUserData);
@@ -30,13 +30,17 @@ function Camera() {
 
   useEffect(() => {
     startCamera();
+    return () => {
+      // Clean up the camera when unmounting the component
+    };
   }, []);
 
   const stopCamera = () => {
     if (webcamRef.current && showCamera) {
-      webcamRef.current.getTracks().forEach((track) => track.stop());
+      webcamRef.current = webcamRef.current
+        .getTracks()
+        .forEach((track) => track.stop());
       webcamRef.current = null;
-      setShowCamera(false);
     }
     router.push("/");
   };
@@ -53,25 +57,32 @@ function Camera() {
     setData(data);
   };
 
+  const handleResult = debounce((result, error) => {
+    if (showCamera) {
+      console.log("cek " + result?.text + " error " + error);
+
+      if (!!result) {
+        setShowCamera(false);
+        convertObject(result?.text);
+        webcamRef.current = null;
+        stopCamera();
+      }
+    }
+  }, 100);
+
   return (
     <div>
       <h1>Camera Page</h1>
       <Grid item xs={12}>
-        {showCamera && (
+        {showCamera ? (
           <QrReader
-            ref={qrReaderRef} // Assign the ref to QrReader
-            onResult={(result) => {
-              if (!!result) {
-                stopCamera();
-                convertObject(result?.text);
-                qrReaderRef.current.stop();
-              }
-            }}
-            //this is facing mode : "environment " it will open backcamera of the smartphone and if not found will
-            // open the front camera
+            ref={webcamRef}
+            onResult={handleResult}
             constraints={{ facingMode: "environment" }}
             style={{ width: "40%", height: "40%" }}
           />
+        ) : (
+          ""
         )}
       </Grid>
     </div>
