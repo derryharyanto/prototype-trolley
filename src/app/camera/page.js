@@ -60,9 +60,7 @@ function Camera() {
         {showCamera && (
           <QrReader
             ref={qrReaderRef} // Assign the ref to QrReader
-            onResult={(result, error) => {
-              console.log("cek " + result?.text + " error " + error);
-
+            onResult={(result) => {
               if (!!result) {
                 stopCamera();
                 convertObject(result?.text);
