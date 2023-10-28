@@ -39,6 +39,13 @@ function ShowUser() {
     return formattedDate;
   };
 
+  const deleteUser = (value) => {
+    console.log(data);
+
+    setData(data.filter((item) => item.id !== value));
+    router.push("/status");
+  };
+
   return (
     <Grid item xs={12}>
       <TableContainer component={Paper}>
@@ -68,6 +75,7 @@ function ShowUser() {
                   <Button
                     startIcon={<DeleteForever />}
                     variant="outlined"
+                    onClick={() => deleteUser(data.id)}
                     color="error"
                   >
                     Finish Borrow

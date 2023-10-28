@@ -31,16 +31,16 @@ function Camera() {
   useEffect(() => {
     startCamera();
     return () => {
-      // Clean up the camera when unmounting the component
+      stopCamera();
     };
   }, []);
 
   const stopCamera = () => {
     if (webcamRef.current && showCamera) {
-      webcamRef.current = webcamRef.current
-        .getTracks()
-        .forEach((track) => track.stop());
-      webcamRef.current = null;
+      webcamRef.current.getTracks().forEach(function (track) {
+        track.stop();
+        track.enabled = false;
+      });
     }
     router.push("/");
   };
@@ -57,8 +57,8 @@ function Camera() {
     setData(data);
   };
 
-  const handleResult = debounce((result, error) => {
-    if (showCamera) {
+  const handleResult = (result, error) => {
+    if (!!showCamera) {
       console.log("cek " + result?.text + " error " + error);
 
       if (!!result) {
@@ -68,21 +68,23 @@ function Camera() {
         stopCamera();
       }
     }
-  }, 100);
+  };
+
+  const backHome = () => {
+    router.push("/");
+  };
 
   return (
     <div>
       <h1>Camera Page</h1>
       <Grid item xs={12}>
-        {showCamera ? (
+        {showCamera && (
           <QrReader
             ref={webcamRef}
             onResult={handleResult}
             constraints={{ facingMode: "environment" }}
             style={{ width: "40%", height: "40%" }}
           />
-        ) : (
-          ""
         )}
       </Grid>
     </div>
