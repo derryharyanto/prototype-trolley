@@ -41,7 +41,6 @@ function ShowUser() {
 
   const deleteUser = (value) => {
     console.log(data);
-
     setData(data.filter((item) => item.id !== value));
     router.push("/status");
   };

@@ -9,6 +9,7 @@ import { useAtom } from "jotai";
 import { AllUserData } from "../storing/userData";
 import { v4 } from "uuid";
 import { debounce } from "lodash";
+import { ArrowBack } from "@mui/icons-material";
 
 function Camera() {
   const webcamRef = useRef(null);
@@ -30,9 +31,6 @@ function Camera() {
 
   useEffect(() => {
     startCamera();
-    return () => {
-      stopCamera();
-    };
   }, []);
 
   const stopCamera = () => {
@@ -41,7 +39,14 @@ function Camera() {
         track.stop();
         track.enabled = false;
       });
+      webcamRef.current = null;
+      setShowCamera(false);
     }
+    router.push("/");
+  };
+
+  const backHome = () => {
+    stopCamera();
     router.push("/");
   };
 
@@ -62,21 +67,27 @@ function Camera() {
       console.log("cek " + result?.text + " error " + error);
 
       if (!!result) {
-        setShowCamera(false);
         convertObject(result?.text);
-        webcamRef.current = null;
         stopCamera();
       }
     }
   };
 
-  const backHome = () => {
-    router.push("/");
-  };
-
   return (
     <div>
-      <h1>Camera Page</h1>
+      <Grid item xs={12}>
+        Camera Page
+      </Grid>
+      <Grid item xs={12}>
+        <Button
+          startIcon={<ArrowBack />}
+          variant="outlined"
+          onClick={backHome}
+          color="warning"
+        >
+          Back To Home
+        </Button>
+      </Grid>
       <Grid item xs={12}>
         {showCamera && (
           <QrReader
