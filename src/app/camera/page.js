@@ -25,7 +25,7 @@ function Camera() {
       webcamRef.current = stream;
       qrCodeRef.current = new Html5Qrcode("qr-code-reader");
       qrCodeRef.current.start(
-        { facingMode: "environment" },
+        { facingMode: { exact: "environment" } },
         config,
         qrCodeSuccessCallback
       );
