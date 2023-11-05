@@ -1,19 +1,19 @@
 "use client";
 
 import React, { useState, useRef, useContext, use } from "react";
-import { Button, Grid } from "@mui/material";
+import { Box, Button, Grid } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { QrReader } from "react-qr-reader";
 import { useAtom } from "jotai";
 import { AllUserData } from "../storing/userData";
 import { v4 } from "uuid";
 import { debounce } from "lodash";
 import { ArrowBack } from "@mui/icons-material";
+import { Html5Qrcode } from "html5-qrcode";
 
 function Camera() {
   const webcamRef = useRef(null);
-  const [showCamera, setShowCamera] = useState(false);
+  const qrCodeRef = useRef(null);
   const router = useRouter();
   const [data, setData] = useAtom(AllUserData);
 
@@ -22,26 +22,38 @@ function Camera() {
       const stream = await navigator.mediaDevices.getUserMedia({
         video: true,
       });
-      webcamRef.current = stream; // Assign the stream to the video element
-      setShowCamera(true);
+      webcamRef.current = stream;
+      qrCodeRef.current = new Html5Qrcode("qr-code-reader");
+      qrCodeRef.current.start(
+        { facingMode: "environment" },
+        config,
+        qrCodeSuccessCallback
+      );
     } catch (error) {
       console.log("Error accessing camera");
     }
   };
+
+  const qrCodeSuccessCallback = (decodedText) => {
+    console.log("Decoded QR code:", decodedText);
+    handleResult(decodedText);
+  };
+  const config = { fps: 10, qrbox: { width: 1000, height: 1000 } };
 
   useEffect(() => {
     startCamera();
   }, []);
 
   const stopCamera = () => {
-    if (webcamRef.current && showCamera) {
-      webcamRef.current.getTracks().forEach(function (track) {
-        track.stop();
-        track.enabled = false;
+    qrCodeRef.current
+      .stop()
+      .then((ignore) => {
+        // QR Code scanning is stopped.
+      })
+      .catch((err) => {
+        // Stop failed, handle it.
       });
-      webcamRef.current = null;
-      setShowCamera(false);
-    }
+    webcamRef.current = null;
     router.push("/");
   };
 
@@ -62,15 +74,9 @@ function Camera() {
     setData(data);
   };
 
-  const handleResult = (result, error) => {
-    if (!!showCamera) {
-      console.log("cek " + result?.text + " error " + error);
-
-      if (!!result) {
-        convertObject(result?.text);
-        stopCamera();
-      }
-    }
+  const handleResult = (value) => {
+    convertObject(value);
+    stopCamera();
   };
 
   return (
@@ -89,16 +95,10 @@ function Camera() {
         </Button>
       </Grid>
       <Grid item xs={12}>
-        {showCamera && (
-          <QrReader
-            ref={webcamRef}
-            onResult={handleResult}
-            constraints={{ facingMode: "user" }}
-            style={{ width: "40%", height: "40%" }}
-          />
-        )}
+        <Box id="qr-code-reader" />
       </Grid>
     </div>
   );
 }
+
 export default Camera;

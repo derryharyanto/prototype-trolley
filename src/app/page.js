@@ -16,7 +16,6 @@ import {
   Button,
 } from "@mui/material";
 import { Assignment, CameraEnhance } from "@mui/icons-material";
-import { QrReader } from "react-qr-reader";
 import { useRouter, useParams } from "next/navigation";
 import { useAtom } from "jotai";
 import { AllUserData } from "./storing/userData";
