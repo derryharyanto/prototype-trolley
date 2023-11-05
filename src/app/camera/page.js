@@ -93,7 +93,7 @@ function Camera() {
           <QrReader
             ref={webcamRef}
             onResult={handleResult}
-            constraints={{ facingMode: "environment" }}
+            constraints={{ facingMode: "user" }}
             style={{ width: "40%", height: "40%" }}
           />
         )}
