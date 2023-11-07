@@ -7,7 +7,6 @@ import { useEffect } from "react";
 import { useAtom } from "jotai";
 import { AllUserData } from "../storing/userData";
 import { v4 } from "uuid";
-import { debounce } from "lodash";
 import { ArrowBack } from "@mui/icons-material";
 import { Html5Qrcode } from "html5-qrcode";
 
@@ -19,13 +18,13 @@ function Camera() {
 
   const startCamera = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: true,
-      });
-      webcamRef.current = stream;
+      // const stream = await navigator.mediaDevices.getUserMedia({
+      //   video: true,
+      // });
+      // webcamRef.current = stream;
       qrCodeRef.current = new Html5Qrcode("qr-code-reader");
       qrCodeRef.current.start(
-        { facingMode: { exact: "environment" } },
+        { facingMode: "environment" },
         config,
         qrCodeSuccessCallback
       );
@@ -53,7 +52,7 @@ function Camera() {
       .catch((err) => {
         // Stop failed, handle it.
       });
-    webcamRef.current = null;
+    // webcamRef.current = null;
     router.push("/");
   };
 
